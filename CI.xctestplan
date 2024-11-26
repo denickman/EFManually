@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "A86AB81F-9626-405D-8749-C0474FC86EAD",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeedManually.xcodeproj",
+        "identifier" : "8586E40D2CF4755B0068AC7A",
+        "name" : "EssentialFeedManuallyTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeedManually.xcodeproj",
+        "identifier" : "8586E43C2CF5AB490068AC7A",
+        "name" : "EssentialFeedAPIEndToEndTests"
+      }
+    }
+  ],
+  "version" : 1
+}

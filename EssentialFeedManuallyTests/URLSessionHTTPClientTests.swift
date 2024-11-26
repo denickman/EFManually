@@ -78,7 +78,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         let data = anyData()
         let response = makeHttpResponse()
         
-        let receivedValues = resultValueFor(data: data, response: response, error: nil)
+        let receivedValues = resultForValue(data: data, response: response, error: nil)
         
         XCTAssertEqual(receivedValues?.data, data)
         XCTAssertEqual(receivedValues?.response.url, response.url)
@@ -89,7 +89,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         // data = nil, error - nil,
         let response = makeHttpResponse()
         
-        let receivedValues = resultValueFor(data: nil, response: response, error: nil)
+        let receivedValues = resultForValue(data: nil, response: response, error: nil)
         
         let emptyData = Data()
         
@@ -138,7 +138,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         return receivedResults
     }
     
-    private func resultValueFor(
+    private func resultForValue(
         data: Data?,
         response: URLResponse?,
         error: Error?,
@@ -208,7 +208,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         
         // MARK: - URLProtocol
         
-        
         override static func canInit(with request: URLRequest) -> Bool {
             true
         }
@@ -216,7 +215,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         override static func canonicalRequest(for request: URLRequest) -> URLRequest {
             request
         }
-        
         
         override func startLoading() {
             if let requestObserver = URLProtocolStub.requestObserver {

@@ -8,7 +8,18 @@
 import XCTest
 import EssentialFeedManually
 
-/// CacheFeedUserCase - Test of LocalFeedStore with spy - FeedStoreSpy instead of CodableFeedStore or CoreDataFeedStore
+/*
+ CacheFeedUseCaseTests: Эти тесты проверяют сохранение данных в кэш. Они фокусируются на:
+ 
+ Удалении старого кэша перед вставкой новых данных.
+ Корректной обработке ошибок при удалении или вставке.
+ Проверке поведения при успешном или неудачном завершении операции сохранения.
+ Убедиться, что ошибки удаления или вставки не доставляются после деинициализации sut.
+ 
+ В CacheFeedUseCaseTests основное сообщение — .deleteCachedFeed и .insert, которые используются при удалении старого кэша и добавлении новых данных.
+ 
+ В CacheFeedUseCaseTests акцент на том, что сохранение данных не должно продолжаться после ошибки удаления.
+ */
 
 class CacheFeedUseCaseTests: XCTestCase {
     

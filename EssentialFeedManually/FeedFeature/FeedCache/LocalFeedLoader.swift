@@ -19,9 +19,8 @@ public final class LocalFeedLoader {
 }
 
 extension LocalFeedLoader: FeedLoader {
-    
     public func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        store.retrieve {[weak self] result in
+        store.retrieve { [weak self] result in
             
             guard let self else { return }
             
@@ -40,7 +39,6 @@ extension LocalFeedLoader: FeedLoader {
 }
 
 extension LocalFeedLoader {
-    
     public typealias SaveResult = Result<Void, Error>
     
     public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
@@ -65,6 +63,39 @@ extension LocalFeedLoader {
     }
 }
     
+
+extension LocalFeedLoader {
+    func valiateCache() {
+        store.retrieve { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(.some(let cache)) where !FeedCachePolicy.validate(cache.timestamp, against: currentDate()):
+                self.store.delete(completion: { _ in })
+                
+            case .failure:
+                self.store.delete(completion: { _ in })
+                
+            case .success: break
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
    
 extension Array where Element == LocalFeedImage {
     func toModels() -> [FeedImage] {
@@ -77,3 +108,4 @@ extension Array where Element == FeedImage {
         map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
     }
 }
+

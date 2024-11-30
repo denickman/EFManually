@@ -12,10 +12,16 @@ public typealias CachedFeed = (feed: [LocalFeedImage], timestamp: Date)
 public protocol FeedStore {
 
     typealias RetrievalResult = Result<CachedFeed?, Error>
-    typealias InsertionResult = Result<Void, Error>
-    typealias DeletionResult = Result<Void, Error>
+    typealias RetrievalCompletion = (RetrievalResult) -> Void
     
-    func retrieve(completion: @escaping (RetrievalResult) -> Void)
-    func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping (InsertionResult) -> Void)
-    func delete(completion: @escaping (DeletionResult) -> Void)
+    typealias InsertionResult = Result<Void, Error>
+    typealias InsertionCompletion = (InsertionResult) -> Void
+    
+    typealias DeletionResult = Result<Void, Error>
+    typealias DeletionCompletion = (DeletionResult) -> Void
+    
+    
+    func retrieve(completion: @escaping RetrievalCompletion)
+    func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion)
+    func delete(completion: @escaping DeletionCompletion)
 }

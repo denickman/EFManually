@@ -18,46 +18,18 @@ public final class LocalFeedLoader {
     }
 }
 
-// MARK: - Save
-extension LocalFeedLoader {
-    
-    public typealias SaveResult = Result<Void, Error>
-    
-    func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
-        // deletecache
-        store.delete { [weak self] result in
-            guard let self else { return }
-            
-            switch result {
-            case .success:
-                toCache(feed, completion: completion)
-                
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    private func toCache(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
-        store.insert(feed.toLocal(), timestamp: currentDate()) { [weak self] result in
-            guard let self else { return }
-            completion(result)
-        }
-    }
-}
-
-// MARK: - Load
 extension LocalFeedLoader: FeedLoader {
     
     public func load(completion: @escaping (FeedLoader.Result) -> Void) {
-        store.retrieve { [weak self] result in
+        store.retrieve {[weak self] result in
+            
             guard let self else { return }
             
             switch result {
             case .success(.some(let cache)) where FeedCachePolicy.validate(cache.timestamp, against: self.currentDate()):
-                completion(.success(cache.feed.toModels())) // LocalFeedImage into FeedImage
-
-            case .success: // found but not valid
+                completion(.success(cache.feed.toModels()))
+                
+            case .success:
                 completion(.success([]))
                 
             case .failure(let error):
@@ -67,37 +39,41 @@ extension LocalFeedLoader: FeedLoader {
     }
 }
 
-extension Array where Element == FeedImage {
-    func toLocal() -> [LocalFeedImage] {
-        map { .init(id: $0.id, description: $0.description, location: $0.location, url: $0.url)}
-    }
-}
-
-extension Array where Element == LocalFeedImage {
-    func toModels() -> [FeedImage] {
-        map { .init(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
-    }
-}
-
-
-
-// MARK: - For tests
-
 extension LocalFeedLoader {
-    public func validateCache() {
-        store.retrieve { [weak self] result in
+    
+    public typealias SaveResult = Result<Void, Error>
+    
+    public func save(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
+        store.delete { [weak self] deletionResult in
             guard let self else { return }
             
-            switch result {
-            case .success(.some(let cache)) where FeedCachePolicy.validate(cache.timestamp, against: currentDate()):
-                self.store.delete { _ in }
+            switch deletionResult {
+            case .success:
+                self.cache(feed, completion: completion)
                 
             case .failure(let error):
-                self.store.delete { _ in }
-                
-            case .success: // found but not valid
-                break
+                completion(.failure(error))
             }
         }
+    }
+    
+    private func cache(_ feed: [FeedImage], completion: @escaping (SaveResult) -> Void) {
+        store.insert(feed.toLocal(), timestamp: currentDate()) {[weak self] insertionCompletion in
+            guard self != nil else { return }
+            completion(insertionCompletion)
+        }
+    }
+}
+    
+   
+extension Array where Element == LocalFeedImage {
+    func toModels() -> [FeedImage] {
+        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
+    }
+}
+
+extension Array where Element == FeedImage {
+    func toLocal() -> [LocalFeedImage] {
+        map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
     }
 }

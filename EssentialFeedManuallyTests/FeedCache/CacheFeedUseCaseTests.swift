@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeedManually
 
-/// CacheFeedUserCase - Test of LocalFeedStore with spy - FeedStoreSpy
+/// CacheFeedUserCase - Test of LocalFeedStore with spy - FeedStoreSpy instead of CodableFeedStore or CoreDataFeedStore
 
 class CacheFeedUseCaseTests: XCTestCase {
     

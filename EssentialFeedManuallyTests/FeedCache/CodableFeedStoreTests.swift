@@ -8,6 +8,8 @@
 import XCTest
 import EssentialFeedManually
 
+/// CodableFeedStoreTests - Test of CodableFeedStore directly
+
 final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     
     override func setUp() {
@@ -52,7 +54,7 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         insert((feed, timestamp), to: sut)
         expect(sut, toRetrieveTwice: .success(CachedFeed(feed: feed, timestamp: timestamp)))
     }
-
+    
     func test_retrieve_deliversFailureOnRetrievalError() {
         // test if data is invalid "invalid data"
         let storeURL = testSpecificStoreURL()
@@ -81,9 +83,9 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         // add cache then override it with a new cahce
         let sut = makeSUT()
         insert((uniqueImagesFeed().local, Date()), to: sut)
-
+        
         let insertionError = insert((uniqueImagesFeed().local, Date()), to: sut)
-
+        
         XCTAssertNil(insertionError, "Expected to override cache successfully")
     }
     
@@ -153,9 +155,9 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
         // add cache, delete cache, retrive success with none
         let sut = makeSUT()
         insert((uniqueImagesFeed().local, Date()), to: sut)
-
+        
         deleteCache(from: sut)
-
+        
         expect(sut, toRetrieve: .success(.none))
     }
     
@@ -194,13 +196,13 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
             completedExpectations.append(ex2)
             ex2.fulfill()
         }
-
+        
         let ex3 = expectation(description: "Wait for insertion 2")
         sut.insert(uniqueImagesFeed().local, timestamp: Date()) { _ in
             completedExpectations.append(ex3)
             ex3.fulfill()
         }
-
+        
         waitForExpectations(timeout: 5.0)
         
         XCTAssertEqual(completedExpectations, [ex1, ex2, ex3], "Expected side-effects to run serially but operations finished in the wrong order")
@@ -237,8 +239,6 @@ final class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     
 }
 
-
-
 // MARK: - Helpers
 
 extension FeedStoreSpecs where Self: XCTestCase {
@@ -260,7 +260,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for cache retrieval")
-
+        
         sut.retrieve { retrieveResult in
             switch (retrieveResult, expectedResult) {
             case (.success(.none), .success(.none)),
@@ -289,7 +289,9 @@ extension FeedStoreSpecs where Self: XCTestCase {
             switch result {
             case .failure(let error):
                 insertionError = error
+                
             default: ()
+                
             }
             exp.fulfill()
         }
@@ -307,6 +309,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
             switch result {
             case .failure(let error):
                 deletionError = error
+                
             default:
                 ()
             }

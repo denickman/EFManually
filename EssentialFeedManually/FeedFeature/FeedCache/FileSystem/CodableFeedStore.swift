@@ -65,7 +65,6 @@ extension CodableFeedStore: FeedStore {
                 completion(.failure(error))
             }
         }
-        
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
@@ -76,6 +75,7 @@ extension CodableFeedStore: FeedStore {
                 let cache = Cache.init(feed: feed.map(CodableFeedImage.init), timestamp: timestamp)
                 let encode = try encoder.encode(cache)
                 try encode.write(to: url)
+                completion(.success(()))
             } catch let error {
                 completion(.failure(error))
             }

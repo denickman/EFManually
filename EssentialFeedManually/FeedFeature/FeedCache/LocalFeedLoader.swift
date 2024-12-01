@@ -62,10 +62,10 @@ extension LocalFeedLoader {
         }
     }
 }
-    
 
 extension LocalFeedLoader {
-    func valiateCache() {
+    public func validateCache() {
+
         store.retrieve { [weak self] result in
             guard let self else { return }
             switch result {
@@ -75,7 +75,8 @@ extension LocalFeedLoader {
             case .failure:
                 self.store.delete(completion: { _ in })
                 
-            case .success: break
+            case .success:
+                break
             }
         }
     }
